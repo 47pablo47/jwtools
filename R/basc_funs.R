@@ -30,5 +30,18 @@ vd <- function(x) {
   View(head(x,10))
 }
 
-
+#' Split and unlist
+#'
+#' Quickly split the string on provided pattern, and unlist it to create a vector
+#' @param x A string to be split
+#' @param y Pattern used for splitting
+#' @return Vector of elements of the split string
+#' @examples 
+#' string <- "this_is_my_string"
+#' output <- unsp(string,"_")
+#' @export
+unsp <- function(x,y) {
+  z <- unlist(strsplit(x,y))
+  return(z)
+}
 

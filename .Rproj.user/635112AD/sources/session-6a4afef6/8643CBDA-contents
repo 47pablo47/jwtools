@@ -1,0 +1,137 @@
+library(tidyverse)
+library(rstatix)
+library(ggpubr)
+
+#-----------------------------
+#Functions
+unsplit <- function(x,y) {
+  z <- unlist(strsplit(x,y))
+  return(z)
+}
+
+vd <- function(x) {
+  View(head(x,10))
+}
+
+shw <- function(df, x) {
+  res <- df %>% 
+    group_by(treat) %>% 
+    summarise(norm = shapiro_test(!!sym(x))$p.value)
+  return(res)
+}
+
+bplot <- function(df,val) {
+  ggplot(df, aes_string(x="treat",y=val)) +
+    stat_summary(geom="bar", fun="mean", color="black", fill="white", width=0.5) +
+    geom_jitter(aes(shape=rep), width=0.2) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.3))) +
+    theme_bw()
+}
+#----------------------------
+
+#setwd("D:/PLA-kolok/Kasia rat2 pla AS wywolane")
+setwd("D:/PLA-kolok/Kasia rat2 pla AS wywolane/")
+
+lista <- list.files(pattern=".csv", recursive=TRUE)
+biocop <- lista[str_detect(lista, "BIOjacop")]
+biocop
+
+tabl <- data.frame()
+for (plik in biocop) {
+  handle <- read.csv(plik)
+  handle$slice <- paste("slice", 1:nrow(handle), sep = "")
+  
+  plik_edited <- gsub("63x_", "63x-",plik)
+  plik_edited <- gsub("_CI", "-CI",plik_edited)
+  
+  
+  ft_val <- unsplit(plik_edited, "/")
+  sc_val <- unsplit(tail(ft_val,1),"_")
+  
+  handle$treat <- ft_val[2]
+  handle$rep <- ft_val[1]
+  handle$photo <- sc_val[4]
+  handle$cell <- sc_val[5]
+  handle$raw <- tail(ft_val,1)
+  
+  tabl <- rbind(tabl, handle)
+}
+
+tabla <- tabl %>% 
+  mutate(rep = case_when(rep == "powt1" ~ "rep1",
+                         rep == "powt2" ~ "rep2",
+                         TRUE ~ "ERROR")) %>% 
+  mutate(uid = paste(rep, treat, photo,cell, sep="@"))
+
+
+
+cell <- tabla %>% 
+  group_by(rep, treat, uid, photo, cell, slice) %>% 
+  summarise(raw_m1 = mean(M1), raw_m2=mean(M2), overlap = mean(Thresholded.Overlap.Coefficient), k1=mean(Thresholded.k1),k2=mean(Thresholded.k2), pearson = mean(Pearson.s.Coefficient), spearman = mean(Spearman.s.Rank.Coefficient), m1 = mean(Thresholded.M1), m2 = mean(Thresholded.M2))
+
+middle_slice <- cell %>% 
+  filter(slice == "slice3")
+write.csv2(middle_slice, "data_files/Bjcp_middleSlice.csv")
+
+mean_slice <- tabla %>% 
+  group_by(rep, treat, uid, photo, cell) %>% 
+  summarise(raw_m1 = mean(M1), raw_m2=mean(M2), overlap = mean(Thresholded.Overlap.Coefficient), k1=mean(Thresholded.k1),k2=mean(Thresholded.k2), pearson = mean(Pearson.s.Coefficient), spearman = mean(Spearman.s.Rank.Coefficient), m1 = mean(Thresholded.M1), m2 = mean(Thresholded.M2))
+write.csv2(mean_slice, "data_files/Bjcp_meanSlice.csv")
+
+
+#--------------------
+#graphs
+
+analyze <- function(df, val) {
+  swt <- shw(df, val)
+  form <- as.formula(paste0(val, "~treat"))
+  if (any(swt$norm < 0.05)==TRUE) {
+    stat_test <- df %>%
+      ungroup() %>% 
+      wilcox_test(form) %>% 
+      add_xy_position()
+    type <-  " (wilcox)"
+  } else {
+    stat_test <- df %>% 
+      ungroup() %>% 
+      t_test(form) %>% 
+      add_xy_position()
+    type <- " (t.test)"
+  }
+  
+  bplot(df, val) +
+    labs(title = paste0(val,type), x="") +
+    stat_pvalue_manual(stat_test)
+  ggsave(paste("graphs/BIOjacop/",deparse(substitute(df)),"/", val, ".png"), width=4,height=5)
+}
+
+tested_values <- c("pearson","spearman", "m1","m2", "k1","k2", "overlap", "raw_m1", "raw_m2")
+
+for (val in tested_values) {
+  
+  analyze(mean_slice, val)
+  analyze(middle_slice, val)
+  
+}
+
+
+ggplot(mean_slice, aes(x=treat, y=m2)) +
+  geom_jitter()
+wilcox.test(m2~treat,mean_slice)
+
+
+#-------------------
+#Data reuested by Jacek
+#21.01.24
+sem <- function(x) {
+  sd(x) / sqrt(length(x))
+}
+
+summ_data <- middle_slice %>% 
+  group_by(treat) %>% 
+  summarise(mpearson=mean(pearson), pearson_er = sem(pearson), mspearman = mean(spearman), spearman_er=sem(spearman), mm1=mean(m1), mm1_er = sem(m1), mm2 = mean(m2), m2_er = sem(m2))
+summ_data
+
+
+
+

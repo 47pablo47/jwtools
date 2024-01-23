@@ -3,4 +3,5 @@
 export(bplot)
 export(p)
 export(shw)
+export(unsp)
 export(vd)
