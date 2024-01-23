@@ -1,0 +1,7 @@
+Package: jwtools
+Type: Package
+Title: Set of useful tools for common problems 
+Version: 0.0.1.0
+Imports:
+  tidyverse
+RoxygenNote: 7.3.0
