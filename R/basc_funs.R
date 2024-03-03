@@ -45,3 +45,16 @@ unsp <- function(x,y) {
   return(z)
 }
 
+#' Initialize data.frame
+#'
+#' Quickly create data frame based on a matrix with specified number of row and cols
+#' @param x number of columns (1 by default)
+#' @param y number of rows (0 by default)
+#' @return Fresh data.frame with speicified dimensions
+#' @examples 
+#' my_df <- new_df(5,10)
+#' @export
+new_df <- function(x=1,y=0) {
+  df <- data.frame(matrix(ncol=x, nrow=y))
+  return(df)
+}

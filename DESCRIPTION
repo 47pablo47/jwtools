@@ -1,7 +1,7 @@
 Package: jwtools
 Type: Package
 Title: Set of useful tools for common problems 
-Version: 0.0.2.4
+Version: 0.0.3.0
 Authors@R: 
     person("Jan", "Weslawski", , "rocket_racer@wp.pl", role = c("aut", "cre"))
 Description: Offers useful tools for common problems
@@ -9,4 +9,4 @@ Encoding: UTF-8
 Imports:
   dplyr,
   ggplot2
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
