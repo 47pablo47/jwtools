@@ -8,15 +8,15 @@
 #' @examples 
 #' shw(iris, "Sepal.Width", "Species")
 #' @export
-shw <- function(df, y, x="treat") {
+#' @import dplyr
+#' @import rstatix
+shw <- function(df, y, x=(...)) {
   res <- df %>% 
-    group_by(!!sym(x)) %>% 
+    group_by(!!!syms(x)) %>% 
     summarise(pval = shapiro_test(!!sym(y))$p.value) %>% 
     ungroup() %>% 
     mutate(norm = case_when(pval < 0.05 ~ "no",
            TRUE ~ "yes"))
   return(res)
 }
-
-
 

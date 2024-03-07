@@ -4,7 +4,7 @@
 \alias{shw}
 \title{Check normality}
 \usage{
-shw(df, y, x = "treat")
+shw(df, y, x = (...))
 }
 \arguments{
 \item{df}{A data frame that contains measured values}
