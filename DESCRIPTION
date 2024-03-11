@@ -1,10 +1,10 @@
 Package: jwtools
 Type: Package
 Title: Set of useful tools for common problems 
-Version: 0.0.3.2
+Version: 0.0.3.3
 Authors@R: 
     person("Jan", "Weslawski", , "rocket_racer@wp.pl", role = c("aut", "cre"))
-Description: Offers useful tools for common problems
+Description: Offers useful tools for common problems.
 Encoding: UTF-8
 Imports:
   dplyr,
