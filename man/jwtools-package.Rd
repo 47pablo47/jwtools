@@ -6,7 +6,7 @@
 \alias{jwtools-package}
 \title{jwtools: Set of useful tools for common problems}
 \description{
-Offers useful tools for common problems
+Offers useful tools for common problems.
 }
 \author{
 \strong{Maintainer}: Jan Weslawski \email{rocket_racer@wp.pl}
