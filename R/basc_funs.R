@@ -21,13 +21,14 @@ p <- function(...) {
 #'
 #' This function allows for peeking first 10 rows of data frame and is easy to call
 #' @param x A data frame
+#' @param y Integer. How many rows to show, 10 by default
 #' @return Ten first rows of input data frame
 #' @examples 
 #' vd(df)
 #' @export
 
-vd <- function(x) {
-  View(head(x,10))
+vd <- function(x, y=10) {
+  View(head(x,y))
 }
 
 #' Split and unlist
